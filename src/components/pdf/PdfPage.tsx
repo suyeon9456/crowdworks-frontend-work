@@ -11,7 +11,7 @@ interface Props {
 }
 
 const PdfPage = React.memo(({ scale, page }: Props) => {
-  const { selectedId } = usePdfJson();
+  const { selectedId, setSelectedId } = usePdfJson();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const highlightContainerRef = useRef<HTMLDivElement>(null);
@@ -64,14 +64,8 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
         textLayerRef.current.style.setProperty('--scale-factor', scale.toString());
 
         const groupedItems = textContent.items.reduce((acc: any[], item: any) => {
-          const lastGroup = acc[acc.length - 1];
-          if (lastGroup && lastGroup.transform[5] === item.transform[5]) {
-            lastGroup.str += item.str;
-            lastGroup.width += item.width;
-          } else {
-            acc.push({ ...item });
-          }
-          return acc;
+          if (item.str === '') return acc;
+          return [...acc, item];
         }, []);
 
         const textDivs: HTMLDivElement[] = [];
@@ -92,6 +86,15 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
               const textItem = groupedItems[index];
               if (textItem && 'str' in textItem) {
                 div.id = `pdf-text-${textItem.str}`;
+                div.style.cursor = 'pointer';
+
+                div.onmouseenter = () => {
+                  setSelectedId(textItem.str);
+                };
+
+                div.onmouseleave = () => {
+                  setSelectedId(null);
+                };
 
                 if (compareStrings(selectedId, textItem.str) && shadowRootRef.current) {
                   const highlight = document.createElement('div');
