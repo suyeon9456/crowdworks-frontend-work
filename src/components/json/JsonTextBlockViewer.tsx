@@ -1,4 +1,4 @@
-import { JsonData, Text } from '../../types/json';
+import { JsonData, Text, Table, Picture } from '../../types/json';
 import { ContentRenderer } from './ContentRenderer';
 
 interface GroupData {
@@ -8,7 +8,10 @@ interface GroupData {
 
 interface Props {
   jsonData: JsonData | null;
-  groupedContent: { type: 'group' | 'text'; data: Text | GroupData }[];
+  groupedContent: {
+    type: 'group' | 'text' | 'table' | 'picture';
+    data: Text | GroupData | Table | Picture;
+  }[];
 }
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
