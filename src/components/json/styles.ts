@@ -9,6 +9,9 @@ export const JsonViewer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+  width: 595px;
+  height: 842px;
+  overflow-y: scroll;
 `;
 
 export const StyledTextBlock = styled.span<TextBlockProps>`
@@ -36,10 +39,15 @@ export const GroupBlock = styled.div`
   gap: 5px;
 `;
 
-export const TableBlock = styled.table`
-  border: 0;
-  border-collapse: collapse;
+export const TableBlock = styled.div`
+  position: relative;
+  overflow: hidden;
   margin-left: 20px;
+`;
+
+export const TableContainer = styled.div`
+  position: relative;
+  will-change: transform;
 `;
 
 export const TableBody = styled.tbody`
