@@ -1,3 +1,12 @@
+export type Label =
+  | 'unspecified'
+  | 'list'
+  | 'page_header'
+  | 'section_header'
+  | 'list_item'
+  | 'text'
+  | 'picture'
+  | 'table';
 export interface JsonData {
   schema_name: string;
   version: string;
@@ -7,24 +16,18 @@ export interface JsonData {
     binary_hash: number;
     filename: string;
   };
-  body: {
-    self_ref: '#/body';
-    children: Array<{ $ref: string }>;
-    content_layer: 'body';
-    name: string;
-    label: string;
-  };
+  body: Body;
   form_items: [];
   furniture: {
     self_ref: '#/furniture';
     children: Array<{ $ref: string }>;
     content_layer: 'furniture';
     name: string;
-    label: string;
+    label: Label;
   };
   groups: {
     content_layer: 'body';
-    label: string;
+    label: Label;
     name: string;
     parent: { $ref: string };
     self_ref: string;
@@ -37,12 +40,20 @@ export interface JsonData {
   pages: Array<{ image: Image; page_no: number; size: { width: number; height: number } }>;
 }
 
+export interface Body {
+  self_ref: '#/body';
+  children: Array<{ $ref: string }>;
+  content_layer: 'body';
+  name: string;
+  label: Label;
+}
+
 export interface Table {
   self_ref: string;
   parent: { $ref: string };
   children: Array<{ $ref: string }>;
   content_layer: string;
-  label: string;
+  label: Label;
   prov: Array<Prov>;
   captions: [];
   footnotes: [];
@@ -80,7 +91,7 @@ export interface Text {
   parent: { $ref: string };
   children: Array<{ $ref: string }>;
   content_layer: string;
-  label: string;
+  label: Label;
   prov: Array<Prov>;
   orig: string;
   text: string;
@@ -96,7 +107,7 @@ export interface Picture {
   captions: [];
   footnotes: [];
   image: Image;
-  label: string;
+  label: Label;
   references: [];
 }
 
@@ -112,3 +123,19 @@ export interface Image {
   size: { width: number; height: number };
   uri: string;
 }
+
+export interface TextItem {
+  self_ref: string;
+  text: string;
+  parent?: {
+    $ref: string;
+  };
+}
+
+export interface GroupItem {
+  self_ref: string;
+  label: string;
+  children?: { $ref: string }[];
+}
+
+export type JsonElement = Text | Picture | Table | GroupItem | Body;
