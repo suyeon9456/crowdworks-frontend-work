@@ -1,8 +1,8 @@
 import TextContent from './TextContent';
 import GroupContent from './GroupContent';
 import TableContent from './TableContent';
-import PictureContent from './PictureContent';
 import { Text, Table, Picture } from '../../types/json';
+import PictureContent from './PictureContent';
 
 interface GroupData {
   groupRef: string;
