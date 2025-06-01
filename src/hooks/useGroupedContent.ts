@@ -40,6 +40,15 @@ export const useGroupedContent = (
           },
           selfRef: parent.self_ref,
         });
+      } else if (
+        parent &&
+        (parent.label === 'group' || parent.self_ref?.startsWith('#/pictures/'))
+      ) {
+        contentMap.set(text.parent.$ref, {
+          type: 'text',
+          data: text,
+          selfRef: text.self_ref,
+        });
       } else if (!parent || !parent.self_ref?.startsWith('#/groups/')) {
         contentMap.set(text.self_ref, {
           type: 'text',
@@ -55,16 +64,6 @@ export const useGroupedContent = (
           type: 'table',
           data: table,
           selfRef: table.self_ref,
-        });
-      });
-    }
-
-    if (jsonData.pictures) {
-      jsonData.pictures.forEach((picture) => {
-        contentMap.set(picture.self_ref, {
-          type: 'picture',
-          data: picture,
-          selfRef: picture.self_ref,
         });
       });
     }
