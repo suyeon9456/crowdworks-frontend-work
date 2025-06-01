@@ -1,9 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { PDFPageProxy } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
 import { usePdfJson } from '../../contexts/PdfJsonContext';
-import { compareStrings } from '../../utils/string';
 
 interface Props {
   scale: number;
@@ -16,25 +15,34 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
   const textLayerRef = useRef<HTMLDivElement>(null);
   const highlightContainerRef = useRef<HTMLDivElement>(null);
   const shadowRootRef = useRef<ShadowRoot | null>(null);
+  const highlightRef = useRef<HTMLDivElement | null>(null);
+
+  const highlightStyle = useMemo(
+    () => `
+    .highlight {
+      position: absolute;
+      background-color: rgba(24, 144, 255, 0.1);
+      border: 2px solid rgba(9, 109, 217);
+      pointer-events: none;
+      display: none;
+    }
+  `,
+    [],
+  );
 
   useEffect(() => {
-    if (!page) {
-      return;
-    }
+    if (!page) return;
 
     if (highlightContainerRef.current && !shadowRootRef.current) {
       shadowRootRef.current = highlightContainerRef.current.attachShadow({ mode: 'open' });
-
       const style = document.createElement('style');
-      style.textContent = `
-        .highlight {
-          position: absolute;
-          background-color: rgba(24, 144, 255, 0.1);
-          border: 2px solid rgba(9, 109, 217);
-          pointer-events: none;
-        }
-      `;
+      style.textContent = highlightStyle;
       shadowRootRef.current.appendChild(style);
+
+      const highlight = document.createElement('div');
+      highlight.className = 'highlight';
+      shadowRootRef.current.appendChild(highlight);
+      highlightRef.current = highlight;
     }
 
     const viewport = page.getViewport({ scale });
@@ -57,9 +65,7 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
       });
 
       page.getTextContent().then((textContent) => {
-        if (!textLayerRef.current) {
-          return;
-        }
+        if (!textLayerRef.current) return;
 
         textLayerRef.current.style.setProperty('--scale-factor', scale.toString());
 
@@ -77,11 +83,6 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
             textDivs: textDivs,
           })
           .promise.then(() => {
-            if (shadowRootRef.current) {
-              const existingHighlights = shadowRootRef.current.querySelectorAll('.highlight');
-              existingHighlights.forEach((el) => el.remove());
-            }
-
             textDivs.forEach((div, index) => {
               const textItem = groupedItems[index];
               if (textItem && 'str' in textItem) {
@@ -95,29 +96,34 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
                 div.onmouseleave = () => {
                   setSelectedId(null);
                 };
-
-                if (compareStrings(selectedId, textItem.str) && shadowRootRef.current) {
-                  const highlight = document.createElement('div');
-                  highlight.className = 'highlight';
-
-                  const rect = div.getBoundingClientRect();
-                  const containerRect = highlightContainerRef.current?.getBoundingClientRect();
-
-                  if (containerRect) {
-                    highlight.style.left = `${rect.left - containerRect.left}px`;
-                    highlight.style.top = `${rect.top - containerRect.top}px`;
-                    highlight.style.width = `${rect.width}px`;
-                    highlight.style.height = `${rect.height}px`;
-                  }
-
-                  shadowRootRef.current.appendChild(highlight);
-                }
               }
             });
           });
       });
     }
-  }, [page, scale, selectedId]);
+  }, [page, scale, highlightStyle]);
+
+  useEffect(() => {
+    if (!shadowRootRef.current || !highlightRef.current) return;
+
+    const highlight = highlightRef.current;
+    const textDiv = document.getElementById(`pdf-text-${selectedId}`);
+
+    if (textDiv && selectedId) {
+      const rect = textDiv.getBoundingClientRect();
+      const containerRect = highlightContainerRef.current?.getBoundingClientRect();
+
+      if (containerRect) {
+        highlight.style.left = `${rect.left - containerRect.left}px`;
+        highlight.style.top = `${rect.top - containerRect.top}px`;
+        highlight.style.width = `${rect.width}px`;
+        highlight.style.height = `${rect.height}px`;
+        highlight.style.display = 'block';
+      }
+    } else {
+      highlight.style.display = 'none';
+    }
+  }, [selectedId]);
 
   return (
     <PdfPageContainer>
