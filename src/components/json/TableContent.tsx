@@ -1,6 +1,6 @@
 import { usePdfJson } from '../../contexts/PdfJsonContext';
 import { Table } from '../../types/json';
-
+import { TableBlock, TableBody, TableCol, TableRow } from './styles';
 interface Props {
   table: Table;
 }
@@ -8,33 +8,26 @@ interface Props {
 const TableContent = ({ table }: Props) => {
   const { selectedId, setSelectedId } = usePdfJson();
   return (
-    <div>
-      <table style={{ borderCollapse: 'collapse', width: '100%', margin: '1rem 0' }}>
-        <tbody>
-          {table.data.grid.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {row.map((cell, cellIndex) => (
-                <td
-                  id={`table-cell-${cell.text}`}
-                  key={cellIndex}
-                  style={{
-                    border: '1px solid #ddd',
-                    padding: '8px',
-                    textAlign: 'left',
-                    backgroundColor: selectedId === cell.text ? 'yellow' : 'transparent',
-                  }}
-                  onClick={() => {
-                    setSelectedId(cell.text);
-                  }}
-                >
-                  {cell.text}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <TableBlock>
+      <TableBody>
+        {table.data.grid.map((row, rowIndex) => (
+          <TableRow key={rowIndex}>
+            {row.map((cell, cellIndex) => (
+              <TableCol
+                id={`table-cell-${cell.text}`}
+                key={cellIndex}
+                isSelected={selectedId === cell.text}
+                onClick={() => {
+                  setSelectedId(cell.text);
+                }}
+              >
+                {cell.text}
+              </TableCol>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </TableBlock>
   );
 };
 
