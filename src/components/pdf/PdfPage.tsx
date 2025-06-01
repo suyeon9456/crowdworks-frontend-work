@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import * as pdfjs from 'pdfjs-dist';
-import { PDFPageProxy } from 'pdfjs-dist/types/src/display/api';
+import { PDFPageProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
 import { usePdfJson } from '../../contexts/PdfJsonContext';
 
@@ -69,10 +69,20 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
 
         textLayerRef.current.style.setProperty('--scale-factor', scale.toString());
 
-        const groupedItems = textContent.items.reduce((acc: any[], item: any) => {
-          if (item.str === '') return acc;
-          return [...acc, item];
-        }, []);
+        const groupedItems = textContent.items
+          .filter((item): item is TextItem => 'str' in item && item.str.trim() !== '')
+          .reduce((acc: TextItem[], item: TextItem) => {
+            const lastGroup = acc[acc.length - 1];
+            if (!lastGroup) return [item];
+            const gap = item.transform[4] - (lastGroup.transform[4] + lastGroup.width);
+            if (lastGroup && lastGroup.transform[5] === item.transform[5] && gap < 20) {
+              lastGroup.str += item.str;
+              lastGroup.width += item.width;
+            } else {
+              acc.push({ ...item });
+            }
+            return acc;
+          }, []);
 
         const textDivs: HTMLDivElement[] = [];
         pdfjs
