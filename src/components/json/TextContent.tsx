@@ -1,25 +1,25 @@
 import { usePdfJson } from '../../contexts/PdfJsonContext';
-import { TextItem as TextItemType } from '../../types/json';
+import { Text } from '../../types/json';
+import { StyledTextBlock } from './styles';
 
 interface Props {
-  text: TextItemType;
+  text: Text;
 }
 
 const TextContent = ({ text }: Props) => {
   const { selectedId, setSelectedId } = usePdfJson();
 
   return (
-    <p
-      style={{
-        backgroundColor: selectedId === text.text ? 'yellow' : 'transparent',
-      }}
+    <StyledTextBlock
+      isSelected={selectedId === text.text}
+      label={text.label}
       id={`json-text-${text.text}`}
       onClick={() => {
         setSelectedId(text.text);
       }}
     >
       {text.text}
-    </p>
+    </StyledTextBlock>
   );
 };
 
