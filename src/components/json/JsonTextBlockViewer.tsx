@@ -1,7 +1,7 @@
 import { JsonData, Text, Table, Picture } from '../../types/json';
 import GroupContent from './GroupContent';
+import { JsonViewer } from './styles';
 import TableContent from './TableContent';
-import PictureContent from './PictureContent';
 import TextContent from './TextContent';
 import React from 'react';
 
@@ -10,7 +10,7 @@ interface GroupData {
   children: Text[];
 }
 
-type ContentType = 'group' | 'text' | 'table' | 'picture';
+type ContentType = 'group' | 'text' | 'table';
 type ContentData = Text | GroupData | Table | Picture;
 
 interface Props {
@@ -24,18 +24,17 @@ interface Props {
 const ContentMapper: Record<ContentType, (data: ContentData) => React.ReactElement> = {
   group: (data) => <GroupContent groupChildren={(data as GroupData).children} />,
   table: (data) => <TableContent table={data as Table} />,
-  picture: (data) => <PictureContent picture={data as Picture} />,
   text: (data) => <TextContent text={data as Text} />,
 } as const;
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
   if (jsonData == null) return <></>;
   return (
-    <main style={{ textAlign: 'left', position: 'relative' }}>
+    <JsonViewer style={{ textAlign: 'left', position: 'relative' }}>
       {groupedContent.map((content, index) => (
         <div key={index}>{ContentMapper[content.type](content.data)}</div>
       ))}
-    </main>
+    </JsonViewer>
   );
 };
 
