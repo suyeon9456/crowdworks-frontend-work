@@ -1,25 +1,39 @@
 import { JsonData, Text, Table, Picture } from '../../types/json';
-import { ContentRenderer } from './ContentRenderer';
+import GroupContent from './GroupContent';
+import TableContent from './TableContent';
+import PictureContent from './PictureContent';
+import TextContent from './TextContent';
+import React from 'react';
 
 interface GroupData {
   groupRef: string;
   children: Text[];
 }
 
+type ContentType = 'group' | 'text' | 'table' | 'picture';
+type ContentData = Text | GroupData | Table | Picture;
+
 interface Props {
   jsonData: JsonData | null;
   groupedContent: {
-    type: 'group' | 'text' | 'table' | 'picture';
-    data: Text | GroupData | Table | Picture;
+    type: ContentType;
+    data: ContentData;
   }[];
 }
+
+const ContentMapper: Record<ContentType, (data: ContentData) => React.ReactElement> = {
+  group: (data) => <GroupContent groupChildren={(data as GroupData).children} />,
+  table: (data) => <TableContent table={data as Table} />,
+  picture: (data) => <PictureContent picture={data as Picture} />,
+  text: (data) => <TextContent text={data as Text} />,
+} as const;
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
   if (jsonData == null) return <></>;
   return (
     <main style={{ textAlign: 'left', position: 'relative' }}>
       {groupedContent.map((content, index) => (
-        <ContentRenderer key={index} content={content} />
+        <div key={index}>{ContentMapper[content.type](content.data)}</div>
       ))}
     </main>
   );
