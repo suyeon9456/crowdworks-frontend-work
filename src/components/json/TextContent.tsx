@@ -1,3 +1,4 @@
+import { usePdfJson } from '../../contexts/PdfJsonContext';
 import { TextItem as TextItemType } from '../../types/json';
 
 interface Props {
@@ -5,10 +6,20 @@ interface Props {
 }
 
 const TextContent = ({ text }: Props) => {
+  const { selectedId, setSelectedId } = usePdfJson();
+
   return (
-    <div>
-      <p>{text.text}</p>
-    </div>
+    <p
+      style={{
+        backgroundColor: selectedId === text.text ? 'yellow' : 'transparent',
+      }}
+      id={`json-text-${text.text}`}
+      onClick={() => {
+        setSelectedId(text.text);
+      }}
+    >
+      {text.text}
+    </p>
   );
 };
 

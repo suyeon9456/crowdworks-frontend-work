@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { PDFPageProxy } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
+import { usePdfJson } from '../../contexts/PdfJsonContext';
 
 interface Props {
   scale: number;
@@ -9,13 +10,32 @@ interface Props {
 }
 
 const PdfPage = React.memo(({ scale, page }: Props) => {
+  const { selectedId } = usePdfJson();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
+  const highlightContainerRef = useRef<HTMLDivElement>(null);
+  const shadowRootRef = useRef<ShadowRoot | null>(null);
 
   useEffect(() => {
     if (!page) {
       return;
     }
+
+    if (highlightContainerRef.current && !shadowRootRef.current) {
+      shadowRootRef.current = highlightContainerRef.current.attachShadow({ mode: 'open' });
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .highlight {
+          position: absolute;
+          background-color: rgba(24, 144, 255, 0.1);
+          border: 2px solid rgba(9, 109, 217);
+          pointer-events: none;
+        }
+      `;
+      shadowRootRef.current.appendChild(style);
+    }
+
     const viewport = page.getViewport({ scale });
 
     const canvas = canvasRef.current;
@@ -42,20 +62,66 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
 
         textLayerRef.current.style.setProperty('--scale-factor', scale.toString());
 
-        pdfjs.renderTextLayer({
-          textContentSource: textContent,
-          container: textLayerRef.current,
-          viewport: viewport,
-          textDivs: [],
-        });
+        const textDivs: HTMLDivElement[] = [];
+        pdfjs
+          .renderTextLayer({
+            textContentSource: textContent,
+            container: textLayerRef.current,
+            viewport: viewport,
+            textDivs: textDivs,
+          })
+          .promise.then(() => {
+            // 기존 하이라이트 제거
+            if (shadowRootRef.current) {
+              const existingHighlights = shadowRootRef.current.querySelectorAll('.highlight');
+              existingHighlights.forEach((el) => el.remove());
+            }
+
+            textDivs.forEach((div, index) => {
+              const textItem = textContent.items[index];
+              if (textItem && 'str' in textItem) {
+                div.id = `pdf-text-${textItem.str}`;
+
+                // 선택된 텍스트에 대해 Shadow DOM에 하이라이트 요소 추가
+                if (selectedId === textItem.str && shadowRootRef.current) {
+                  const highlight = document.createElement('div');
+                  highlight.className = 'highlight';
+
+                  // 텍스트 요소의 위치와 크기를 하이라이트에 적용
+                  const rect = div.getBoundingClientRect();
+                  const containerRect = highlightContainerRef.current?.getBoundingClientRect();
+
+                  if (containerRect) {
+                    highlight.style.left = `${rect.left - containerRect.left}px`;
+                    highlight.style.top = `${rect.top - containerRect.top}px`;
+                    highlight.style.width = `${rect.width}px`;
+                    highlight.style.height = `${rect.height}px`;
+                  }
+
+                  shadowRootRef.current.appendChild(highlight);
+                }
+              }
+            });
+          });
       });
     }
-  }, [page, scale]);
+  }, [page, scale, selectedId]);
 
   return (
     <PdfPageContainer>
       <canvas ref={canvasRef} />
       <PdfPageTextLayer ref={textLayerRef} />
+      <div
+        ref={highlightContainerRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+        }}
+      />
     </PdfPageContainer>
   );
 });
