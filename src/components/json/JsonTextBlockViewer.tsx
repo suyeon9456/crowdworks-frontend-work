@@ -7,7 +7,7 @@ interface GroupData {
 }
 
 interface Props {
-  jsonData: JsonData;
+  jsonData: JsonData | null;
   groupedContent: { type: 'group' | 'text'; data: Text | GroupData }[];
 }
 
