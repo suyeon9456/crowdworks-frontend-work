@@ -1,16 +1,28 @@
-import { TextItem as TextItemType } from '../../types/json';
+import { usePdfJson } from '../../contexts/PdfJsonContext';
+import { Text } from '../../types/json';
+import { StyledTextBlock, GroupBlock } from './styles';
 
 interface GroupContentProps {
-  groupChildren: TextItemType[];
+  groupChildren: Text[];
 }
 
 const GroupContent = ({ groupChildren }: GroupContentProps) => {
+  const { selectedId, setSelectedId } = usePdfJson();
   return (
-    <div>
+    <GroupBlock>
       {groupChildren.map((child) => (
-        <p key={child.self_ref}>{child.text}</p>
+        <StyledTextBlock
+          key={child.self_ref}
+          isSelected={selectedId === child.text}
+          label={child.label}
+          onClick={() => {
+            setSelectedId(child.text);
+          }}
+        >
+          {child.text}
+        </StyledTextBlock>
       ))}
-    </div>
+    </GroupBlock>
   );
 };
 
