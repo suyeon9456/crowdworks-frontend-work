@@ -17,7 +17,6 @@ export const useGroupedContent = (
     const rendered = new Set<string>();
     const contentMap = new Map<string, GroupedContent>();
 
-    // Process texts
     jsonData.texts.forEach((text) => {
       const parentRef = text.parent?.$ref;
       const parent = refMap.current.get(parentRef);
