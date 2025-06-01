@@ -3,6 +3,7 @@ import * as pdfjs from 'pdfjs-dist';
 import { PDFPageProxy } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
 import { usePdfJson } from '../../contexts/PdfJsonContext';
+import { compareStrings } from '../../utils/string';
 
 interface Props {
   scale: number;
@@ -62,10 +63,21 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
 
         textLayerRef.current.style.setProperty('--scale-factor', scale.toString());
 
+        const groupedItems = textContent.items.reduce((acc: any[], item: any) => {
+          const lastGroup = acc[acc.length - 1];
+          if (lastGroup && lastGroup.transform[5] === item.transform[5]) {
+            lastGroup.str += item.str;
+            lastGroup.width += item.width;
+          } else {
+            acc.push({ ...item });
+          }
+          return acc;
+        }, []);
+
         const textDivs: HTMLDivElement[] = [];
         pdfjs
           .renderTextLayer({
-            textContentSource: textContent,
+            textContentSource: { ...textContent, items: groupedItems },
             container: textLayerRef.current,
             viewport: viewport,
             textDivs: textDivs,
@@ -77,11 +89,11 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
             }
 
             textDivs.forEach((div, index) => {
-              const textItem = textContent.items[index];
+              const textItem = groupedItems[index];
               if (textItem && 'str' in textItem) {
                 div.id = `pdf-text-${textItem.str}`;
 
-                if (selectedId === textItem.str && shadowRootRef.current) {
+                if (compareStrings(selectedId, textItem.str) && shadowRootRef.current) {
                   const highlight = document.createElement('div');
                   highlight.className = 'highlight';
 
