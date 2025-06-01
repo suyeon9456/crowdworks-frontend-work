@@ -34,7 +34,7 @@ export interface JsonData {
     children: Array<{ $ref: string }>;
   };
   texts: Array<Text>;
-  pictures: Array<Image>;
+  pictures: Array<Picture>;
   tables: Array<Table>;
   key_value_items: [];
   pages: Array<{ image: Image; page_no: number; size: { width: number; height: number } }>;
