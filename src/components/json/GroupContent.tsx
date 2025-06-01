@@ -2,11 +2,11 @@ import { usePdfJson } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
 import { StyledTextBlock, GroupBlock } from './styles';
 
-interface GroupContentProps {
+interface Props {
   groupChildren: Text[];
 }
 
-const GroupContent = ({ groupChildren }: GroupContentProps) => {
+const GroupContent = ({ groupChildren }: Props) => {
   const { selectedId, setSelectedId } = usePdfJson();
   return (
     <GroupBlock>
