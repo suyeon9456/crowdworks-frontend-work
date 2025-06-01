@@ -71,7 +71,6 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
             textDivs: textDivs,
           })
           .promise.then(() => {
-            // 기존 하이라이트 제거
             if (shadowRootRef.current) {
               const existingHighlights = shadowRootRef.current.querySelectorAll('.highlight');
               existingHighlights.forEach((el) => el.remove());
@@ -82,12 +81,10 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
               if (textItem && 'str' in textItem) {
                 div.id = `pdf-text-${textItem.str}`;
 
-                // 선택된 텍스트에 대해 Shadow DOM에 하이라이트 요소 추가
                 if (selectedId === textItem.str && shadowRootRef.current) {
                   const highlight = document.createElement('div');
                   highlight.className = 'highlight';
 
-                  // 텍스트 요소의 위치와 크기를 하이라이트에 적용
                   const rect = div.getBoundingClientRect();
                   const containerRect = highlightContainerRef.current?.getBoundingClientRect();
 
