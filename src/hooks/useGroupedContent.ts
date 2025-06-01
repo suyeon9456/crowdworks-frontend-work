@@ -1,9 +1,13 @@
 import { useMemo, RefObject } from 'react';
-import { JsonData, JsonElement, Text, Table, Picture } from '../types/json';
+import { JsonData, JsonElement, Text, Table } from '../types/json';
 
+interface GroupData {
+  groupRef: string;
+  children: Text[];
+}
 interface GroupedContent {
-  type: 'group' | 'text' | 'table' | 'picture';
-  data: Text | { groupRef: string; children: Text[] } | Table | Picture;
+  type: 'group' | 'text' | 'table';
+  data: Text | GroupData | Table;
   selfRef: string;
 }
 

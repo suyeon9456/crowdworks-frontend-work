@@ -1,4 +1,4 @@
-import { JsonData, Text, Table, Picture } from '../../types/json';
+import { JsonData, Text, Table } from '../../types/json';
 import GroupContent from './GroupContent';
 import { JsonViewer } from './styles';
 import TableContent from './TableContent';
@@ -11,7 +11,7 @@ interface GroupData {
 }
 
 type ContentType = 'group' | 'text' | 'table';
-type ContentData = Text | GroupData | Table | Picture;
+type ContentData = Text | GroupData | Table;
 
 interface Props {
   jsonData: JsonData | null;
