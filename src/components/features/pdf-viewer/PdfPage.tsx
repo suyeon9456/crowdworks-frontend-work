@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { PDFPageProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
-import { usePdfJsonSelection } from '../../../contexts/PdfJsonContext';
+import { usePdfJsonSelection } from '@/contexts/PdfJsonContext';
 
 interface Props {
   scale: number;
