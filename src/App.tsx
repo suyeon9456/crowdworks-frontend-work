@@ -1,10 +1,10 @@
 import './App.css';
-import PdfUrlViewer from './components/pdf/PdfUrlViewer';
+import PdfUrlViewer from './components/features/pdf-viewer/PdfUrlViewer';
 import * as pdfjs from 'pdfjs-dist';
 import { useJsonData } from './hooks/useJsonData';
 import { useGroupedContent } from './hooks/useGroupedContent';
-import JsonViewer from './components/json/JsonViewer';
 import { PdfJsonProvider } from './contexts/PdfJsonContext';
+import JsonViewer from './components/features/json-viewer/JsonViewer';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 function App() {
