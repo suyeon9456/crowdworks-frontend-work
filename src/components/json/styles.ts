@@ -5,7 +5,7 @@ interface TextBlockProps {
   label: string;
 }
 
-export const JsonViewer = styled.div`
+export const JsonViewerContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;

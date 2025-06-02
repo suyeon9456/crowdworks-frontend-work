@@ -1,7 +1,6 @@
-import { Text } from '../../types/json';
-import { StyledTextBlock } from './styles';
+import { Text } from '../../../types/json';
 import React from 'react';
-
+import { StyledTextBlock } from '../styles';
 interface Props {
   data: Text;
   selectedText: string | null;

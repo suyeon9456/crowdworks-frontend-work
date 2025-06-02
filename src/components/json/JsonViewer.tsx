@@ -1,8 +1,8 @@
 import { JsonData, Text, Table } from '../../types/json';
-import GroupContent from './GroupContent';
-import { JsonViewer } from './styles';
-import TableContent from './TableContent';
-import TextContent from './TextContent';
+import GroupContent from './blocks/JsonGroupBlock';
+import { JsonViewerContainer } from './styles';
+import TableContent from './blocks/JsonTableBlock';
+import TextContent from './blocks/JsonTextBlock';
 import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { useEffect } from 'react';
 import { useScroll } from '../../hooks/useScroll';
@@ -35,7 +35,7 @@ const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
   if (jsonData == null) return <></>;
 
   return (
-    <JsonViewer style={{ textAlign: 'left', position: 'relative' }} ref={containerRef}>
+    <JsonViewerContainer style={{ textAlign: 'left', position: 'relative' }} ref={containerRef}>
       {groupedContent.map((content, index) => {
         const commonProps = { selectedText, onSelect: onChangeSelectedJsonText };
         return (
@@ -52,7 +52,7 @@ const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
           </div>
         );
       })}
-    </JsonViewer>
+    </JsonViewerContainer>
   );
 };
 

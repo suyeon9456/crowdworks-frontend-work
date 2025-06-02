@@ -1,5 +1,5 @@
-import { Table } from '../../types/json';
-import { TableBlock, TableBody, TableCol, TableRow } from './styles';
+import { Table } from '../../../types/json';
+import { TableBlock, TableBody, TableCol, TableRow } from '../styles';
 import React from 'react';
 
 interface Props {

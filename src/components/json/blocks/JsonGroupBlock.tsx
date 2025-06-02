@@ -1,6 +1,6 @@
-import { Text } from '../../types/json';
-import { StyledTextBlock, GroupBlock } from './styles';
+import { Text } from '../../../types/json';
 import React from 'react';
+import { GroupBlock, StyledTextBlock } from '../styles';
 
 interface Props {
   data: Text[];
