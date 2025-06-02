@@ -24,13 +24,13 @@ interface Props {
 }
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
-  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
+  const { selectedText, selectedType, onChangeSelectedJsonText } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
   useEffect(() => {
-    if (!selectedText) return;
+    if (!selectedText || selectedType === 'json') return;
     handleScroll(selectedText);
-  }, [selectedText]);
+  }, [selectedText, selectedType]);
 
   if (jsonData == null) return <></>;
 
