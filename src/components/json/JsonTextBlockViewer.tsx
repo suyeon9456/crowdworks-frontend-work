@@ -3,7 +3,9 @@ import GroupContent from './GroupContent';
 import { JsonViewer } from './styles';
 import TableContent from './TableContent';
 import TextContent from './TextContent';
-import React from 'react';
+import { usePdfJson } from '../../contexts/PdfJsonContext';
+import React, { useEffect } from 'react';
+import { useScroll } from '../../hooks/useScroll';
 
 interface GroupData {
   groupRef: string;
@@ -28,9 +30,17 @@ const ContentMapper: Record<ContentType, (data: ContentData) => React.ReactEleme
 } as const;
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
+  const { selectedId } = usePdfJson();
+  const { containerRef, handleScroll } = useScroll();
+
+  useEffect(() => {
+    if (!selectedId) return;
+    handleScroll(selectedId);
+  }, [selectedId, handleScroll]);
+
   if (jsonData == null) return <></>;
   return (
-    <JsonViewer style={{ textAlign: 'left', position: 'relative' }}>
+    <JsonViewer style={{ textAlign: 'left', position: 'relative' }} ref={containerRef}>
       {groupedContent.map((content, index) => (
         <div key={index}>{ContentMapper[content.type](content.data)}</div>
       ))}
