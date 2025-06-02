@@ -1,42 +1,41 @@
-import { useCallback, useEffect, useState } from 'react';
-import PdfPage from './PdfPage';
 import { PDFPageProxy } from 'pdfjs-dist/types/src/display/api';
+import PdfPage from './PdfPage';
+import { PdfViewerContainer } from './styles';
 
-interface Props {
-  getPdfPage: (index: number) => Promise<PDFPageProxy>;
-  page: PDFPageProxy;
-}
+const PdfViewer = ({ pdfData }: { pdfData: PDFPageProxy }) => {
+  // const pdfRef = useRef<PDFDocumentProxy | null>(null);
 
-const PdfViewer = ({ getPdfPage, page }: Props) => {
-  const style = {
-    border: '1px solid #ccc',
-    background: '#ddd',
-  };
+  // const [currentPage, setCurrentPage] = useState<PDFPageProxy | null>(null);
 
-  const [pages, setPages] = useState<PDFPageProxy[]>([]);
+  // useEffect(() => {
+  //   var loadingTask = pdfjs.getDocument('/1.report.pdf');
+  //   loadingTask.promise.then(
+  //     (pdf) => {
+  //       pdfRef.current = pdf;
 
-  const fetchPage = useCallback(
-    async (index: number) => {
-      if (!pages[index]) {
-        const page = await getPdfPage(index);
-        setPages((prev) => {
-          const next = [...prev];
-          next[index] = page;
-          return next;
-        });
-      }
-    },
-    [getPdfPage, pages],
-  );
+  //       pdf.getPage(1).then(function (page) {
+  //         setCurrentPage(page);
+  //       });
+  //     },
+  //     (reason) => {
+  //       console.error(reason);
+  //     },
+  //   );
+  // }, []);
 
-  useEffect(() => {
-    fetchPage(0);
-  }, [fetchPage, page]);
+  // const handleGetPdfPage = async (index: number): Promise<PDFPageProxy> => {
+  //   if (!pdfRef.current) {
+  //     throw new Error('PDF document not loaded');
+  //   }
+  //   return await pdfRef.current.getPage(index + 1);
+  // };
+
+  if (!pdfData) return null;
 
   return (
-    <div style={style}>
-      <PdfPage page={pages[0]} scale={1.0} />
-    </div>
+    <PdfViewerContainer>
+      <PdfPage page={pdfData} scale={1.0} />
+    </PdfViewerContainer>
   );
 };
 

@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+export const PdfViewerContainer = styled.div``;
+
 export const PdfPageContainer = styled.div`
   position: relative;
 `;

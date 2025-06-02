@@ -111,7 +111,7 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
           });
       });
     }
-  }, [page, scale, highlightStyle]);
+  }, [scale, highlightStyle]);
 
   useEffect(() => {
     if (!shadowRootRef.current || !highlightRef.current) return;
