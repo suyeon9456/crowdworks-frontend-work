@@ -15,7 +15,7 @@ const TableContent = React.memo(({ table }: Props) => {
           <TableRow key={rowIndex}>
             {row.map((cell, cellIndex) => (
               <TableCol
-                id={`table-cell-${cell.text}`}
+                id={`json-text-${cell.text}`}
                 key={cellIndex}
                 isSelected={selectedId === cell.text}
                 onClick={() => {

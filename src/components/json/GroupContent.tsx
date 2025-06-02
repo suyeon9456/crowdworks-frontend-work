@@ -13,6 +13,7 @@ const GroupContent = React.memo(({ groupChildren }: Props) => {
       {groupChildren.map((child) => (
         <StyledTextBlock
           key={child.self_ref}
+          id={`json-text-${child.text}`}
           isSelected={selectedId === child.text}
           label={child.label}
           onClick={() => {
