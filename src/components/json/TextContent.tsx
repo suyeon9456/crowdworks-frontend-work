@@ -8,16 +8,14 @@ interface Props {
 }
 
 const TextContent = React.memo(({ text }: Props) => {
-  const { selectedId, setSelectedId } = usePdfJsonSelection();
+  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
 
   return (
     <StyledTextBlock
-      isSelected={selectedId === text.text}
+      isSelected={selectedText === text.text}
       label={text.label}
       id={`json-text-${text.text}`}
-      onClick={() => {
-        setSelectedId(text.text);
-      }}
+      onClick={() => onChangeSelectedJsonText(text.text)}
     >
       {text.text}
     </StyledTextBlock>

@@ -1,20 +1,35 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 
 type PdfJsonState = {
-  selectedId: string | null;
-  setSelectedId: (id: string | null) => void;
+  selectedType: 'json' | 'pdf';
+  selectedText: string | null;
+  onChangeSelectedJsonText: (text: string | null) => void;
+  onChangeSelectedPdfText: (text: string | null) => void;
 };
 
 const PdfJsonContext = createContext<PdfJsonState | undefined>(undefined);
 
 export const PdfJsonProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<'json' | 'pdf'>('json');
+  const [selectedText, setSelectedText] = useState<string | null>(null);
+
+  const handleChangeSelectedJsonId = (text: string | null) => {
+    setSelectedText(text);
+    setSelectedType('json');
+  };
+
+  const handleChangeSelectedPdfId = (text: string | null) => {
+    setSelectedText(text);
+    setSelectedType('pdf');
+  };
 
   return (
     <PdfJsonContext.Provider
       value={{
-        selectedId,
-        setSelectedId,
+        selectedType,
+        selectedText,
+        onChangeSelectedJsonText: handleChangeSelectedJsonId,
+        onChangeSelectedPdfText: handleChangeSelectedPdfId,
       }}
     >
       {children}

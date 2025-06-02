@@ -7,7 +7,7 @@ interface Props {
 }
 
 const TableContent = React.memo(({ table }: Props) => {
-  const { selectedId, setSelectedId } = usePdfJsonSelection();
+  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
   return (
     <TableBlock>
       <TableBody>
@@ -17,10 +17,8 @@ const TableContent = React.memo(({ table }: Props) => {
               <TableCol
                 id={`json-text-${cell.text}`}
                 key={cellIndex}
-                isSelected={selectedId === cell.text}
-                onClick={() => {
-                  setSelectedId(cell.text);
-                }}
+                isSelected={selectedText === cell.text}
+                onClick={() => onChangeSelectedJsonText(cell.text)}
               >
                 {cell.text}
               </TableCol>

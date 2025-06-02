@@ -10,7 +10,7 @@ interface Props {
 }
 
 const PdfPage = React.memo(({ scale, page }: Props) => {
-  const { selectedId, setSelectedId } = usePdfJsonSelection();
+  const { selectedText, onChangeSelectedPdfText } = usePdfJsonSelection();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const highlightContainerRef = useRef<HTMLDivElement>(null);
@@ -100,11 +100,11 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
                 div.style.cursor = 'pointer';
 
                 div.onmouseenter = () => {
-                  setSelectedId(textItem.str);
+                  onChangeSelectedPdfText(textItem.str);
                 };
 
                 div.onmouseleave = () => {
-                  setSelectedId(null);
+                  onChangeSelectedPdfText(null);
                 };
               }
             });
@@ -117,9 +117,9 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
     if (!shadowRootRef.current || !highlightRef.current) return;
 
     const highlight = highlightRef.current;
-    const textDiv = document.getElementById(`pdf-text-${selectedId}`);
+    const textDiv = document.getElementById(`pdf-text-${selectedText}`);
 
-    if (textDiv && selectedId) {
+    if (textDiv && selectedText) {
       const rect = textDiv.getBoundingClientRect();
       const containerRect = highlightContainerRef.current?.getBoundingClientRect();
 
@@ -133,7 +133,7 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
     } else {
       highlight.style.display = 'none';
     }
-  }, [selectedId]);
+  }, [selectedText]);
 
   return (
     <PdfPageContainer>

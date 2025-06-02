@@ -30,13 +30,13 @@ const ContentMapper: Record<ContentType, (data: ContentData) => React.ReactEleme
 } as const;
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
-  const { selectedId } = usePdfJsonSelection();
+  const { selectedText, selectedType } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
   useEffect(() => {
-    if (!selectedId) return;
-    handleScroll(selectedId);
-  }, [selectedId, handleScroll]);
+    if (!selectedText || selectedType === 'json') return;
+    handleScroll(selectedText);
+  }, [selectedText]);
 
   if (jsonData == null) return <></>;
   return (
