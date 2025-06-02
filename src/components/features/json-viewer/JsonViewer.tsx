@@ -1,11 +1,11 @@
-import { JsonData, Text, Table } from '../../types/json';
+import { JsonData, Text, Table } from '../../../types/json';
 import GroupContent from './blocks/JsonGroupBlock';
 import { JsonViewerContainer } from './styles';
 import TableContent from './blocks/JsonTableBlock';
 import TextContent from './blocks/JsonTextBlock';
-import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { useEffect } from 'react';
-import { useScroll } from '../../hooks/useScroll';
+import { useScroll } from '../../../hooks/useScroll';
+import { usePdfJsonSelection } from '../../../contexts/PdfJsonContext';
 
 interface GroupData {
   groupRef: string;

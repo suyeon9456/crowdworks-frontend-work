@@ -1,7 +1,7 @@
-import { Text } from '../../../types/json';
+import { Text } from '../../../../types/json';
 import React from 'react';
 import { StyledTextBlock } from '../styles';
-import { compareJsonToPdfStrings } from '../../../utils/string';
+import { compareJsonToPdfStrings } from '../../../../utils/string';
 interface Props {
   data: Text;
   selectedText: string | null;

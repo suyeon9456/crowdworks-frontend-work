@@ -1,7 +1,7 @@
-import { Table } from '../../../types/json';
+import { Table } from '../../../../types/json';
 import { TableBlock, TableBody, TableCol, TableRow } from '../styles';
 import React from 'react';
-import { compareJsonToPdfStrings } from '../../../utils/string';
+import { compareJsonToPdfStrings } from '../../../../utils/string';
 interface Props {
   data: Table;
   selectedText: string | null;
