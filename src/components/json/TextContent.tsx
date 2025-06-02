@@ -1,4 +1,4 @@
-import { usePdfJson } from '../../contexts/PdfJsonContext';
+import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
 import { StyledTextBlock } from './styles';
 
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const TextContent = ({ text }: Props) => {
-  const { selectedId, setSelectedId } = usePdfJson();
+  const { selectedId, setSelectedId } = usePdfJsonSelection();
 
   return (
     <StyledTextBlock

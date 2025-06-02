@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { PDFPageProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
-import { usePdfJson } from '../../contexts/PdfJsonContext';
+import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 
 interface Props {
   scale: number;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const PdfPage = React.memo(({ scale, page }: Props) => {
-  const { selectedId, setSelectedId } = usePdfJson();
+  const { selectedId, setSelectedId } = usePdfJsonSelection();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const highlightContainerRef = useRef<HTMLDivElement>(null);

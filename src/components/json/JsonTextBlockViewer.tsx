@@ -3,7 +3,7 @@ import GroupContent from './GroupContent';
 import { JsonViewer } from './styles';
 import TableContent from './TableContent';
 import TextContent from './TextContent';
-import { usePdfJson } from '../../contexts/PdfJsonContext';
+import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import React, { useEffect } from 'react';
 import { useScroll } from '../../hooks/useScroll';
 
@@ -30,7 +30,7 @@ const ContentMapper: Record<ContentType, (data: ContentData) => React.ReactEleme
 } as const;
 
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
-  const { selectedId } = usePdfJson();
+  const { selectedId } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
   useEffect(() => {

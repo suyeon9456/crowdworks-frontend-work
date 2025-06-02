@@ -1,4 +1,4 @@
-import { usePdfJson } from '../../contexts/PdfJsonContext';
+import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Table } from '../../types/json';
 import { TableBlock, TableBody, TableCol, TableRow } from './styles';
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
 }
 
 const TableContent = ({ table }: Props) => {
-  const { selectedId, setSelectedId } = usePdfJson();
+  const { selectedId, setSelectedId } = usePdfJsonSelection();
   return (
     <TableBlock>
       <TableBody>
