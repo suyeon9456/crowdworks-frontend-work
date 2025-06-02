@@ -1,6 +1,7 @@
 import { Text } from '../../../types/json';
 import React from 'react';
 import { StyledTextBlock } from '../styles';
+import { compareJsonToPdfStrings } from '../../../utils/string';
 interface Props {
   data: Text;
   selectedText: string | null;
@@ -10,7 +11,7 @@ interface Props {
 const TextContent = React.memo(({ data, selectedText, onSelect }: Props) => {
   return (
     <StyledTextBlock
-      isSelected={selectedText === data.text}
+      isSelected={compareJsonToPdfStrings(data.text, selectedText)}
       label={data.label}
       id={`json-text-${data.text}`}
       onClick={() => onSelect(data.text)}

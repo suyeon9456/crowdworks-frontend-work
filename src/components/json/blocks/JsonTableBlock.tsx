@@ -1,7 +1,7 @@
 import { Table } from '../../../types/json';
 import { TableBlock, TableBody, TableCol, TableRow } from '../styles';
 import React from 'react';
-
+import { compareJsonToPdfStrings } from '../../../utils/string';
 interface Props {
   data: Table;
   selectedText: string | null;
@@ -18,7 +18,7 @@ const TableContent = React.memo(({ data, selectedText, onSelect }: Props) => {
               <TableCol
                 id={`json-text-${cell.text}`}
                 key={cellIndex}
-                isSelected={cell.text === selectedText}
+                isSelected={compareJsonToPdfStrings(cell.text, selectedText)}
                 onClick={() => onSelect(cell.text)}
               >
                 {cell.text}

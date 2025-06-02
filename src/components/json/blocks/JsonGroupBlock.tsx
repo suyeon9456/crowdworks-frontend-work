@@ -1,6 +1,7 @@
 import { Text } from '../../../types/json';
 import React from 'react';
 import { GroupBlock, StyledTextBlock } from '../styles';
+import { compareJsonToPdfStrings } from '../../../utils/string';
 
 interface Props {
   data: Text[];
@@ -15,7 +16,7 @@ const GroupContent = React.memo(({ data, selectedText, onSelect }: Props) => {
         <StyledTextBlock
           key={child.self_ref}
           id={`json-text-${child.text}`}
-          isSelected={child.text === selectedText}
+          isSelected={compareJsonToPdfStrings(child.text, selectedText)}
           label={child.label}
           onClick={() => onSelect(child.text)}
         >
