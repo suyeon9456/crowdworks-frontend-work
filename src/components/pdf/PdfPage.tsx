@@ -74,8 +74,8 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
           .reduce((acc: TextItem[], item: TextItem) => {
             const lastGroup = acc[acc.length - 1];
             if (!lastGroup) return [item];
-            const gap = item.transform[4] - (lastGroup.transform[4] + lastGroup.width);
-            if (lastGroup && lastGroup.transform[5] === item.transform[5] && gap < 20) {
+            const horizontalGap = item.transform[4] - (lastGroup.transform[4] + lastGroup.width);
+            if (lastGroup && lastGroup.transform[5] === item.transform[5] && horizontalGap < 20) {
               lastGroup.str += item.str;
               lastGroup.width += item.width;
             } else {
