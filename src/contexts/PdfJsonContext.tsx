@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 type PdfJsonState = {
   selectedType: 'json' | 'pdf';
@@ -13,15 +13,15 @@ export const PdfJsonProvider = ({ children }: { children: ReactNode }) => {
   const [selectedType, setSelectedType] = useState<'json' | 'pdf'>('json');
   const [selectedText, setSelectedText] = useState<string | null>(null);
 
-  const handleChangeSelectedJsonId = (text: string | null) => {
+  const handleChangeSelectedJsonId = useCallback((text: string | null) => {
     setSelectedText(text);
     setSelectedType('json');
-  };
+  }, []);
 
-  const handleChangeSelectedPdfId = (text: string | null) => {
+  const handleChangeSelectedPdfId = useCallback((text: string | null) => {
     setSelectedText(text);
     setSelectedType('pdf');
-  };
+  }, []);
 
   return (
     <PdfJsonContext.Provider
