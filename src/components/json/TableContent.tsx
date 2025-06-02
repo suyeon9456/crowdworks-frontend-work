@@ -1,11 +1,12 @@
 import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Table } from '../../types/json';
 import { TableBlock, TableBody, TableCol, TableRow } from './styles';
+import React from 'react';
 interface Props {
   table: Table;
 }
 
-const TableContent = ({ table }: Props) => {
+const TableContent = React.memo(({ table }: Props) => {
   const { selectedId, setSelectedId } = usePdfJsonSelection();
   return (
     <TableBlock>
@@ -29,6 +30,6 @@ const TableContent = ({ table }: Props) => {
       </TableBody>
     </TableBlock>
   );
-};
+});
 
 export default TableContent;

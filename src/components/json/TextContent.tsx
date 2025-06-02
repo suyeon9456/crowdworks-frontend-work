@@ -1,12 +1,13 @@
 import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
 import { StyledTextBlock } from './styles';
+import React from 'react';
 
 interface Props {
   text: Text;
 }
 
-const TextContent = ({ text }: Props) => {
+const TextContent = React.memo(({ text }: Props) => {
   const { selectedId, setSelectedId } = usePdfJsonSelection();
 
   return (
@@ -21,6 +22,6 @@ const TextContent = ({ text }: Props) => {
       {text.text}
     </StyledTextBlock>
   );
-};
+});
 
 export default TextContent;

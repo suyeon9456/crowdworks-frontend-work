@@ -1,12 +1,12 @@
 import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
 import { StyledTextBlock, GroupBlock } from './styles';
-
+import React from 'react';
 interface Props {
   groupChildren: Text[];
 }
 
-const GroupContent = ({ groupChildren }: Props) => {
+const GroupContent = React.memo(({ groupChildren }: Props) => {
   const { selectedId, setSelectedId } = usePdfJsonSelection();
   return (
     <GroupBlock>
@@ -24,6 +24,6 @@ const GroupContent = ({ groupChildren }: Props) => {
       ))}
     </GroupBlock>
   );
-};
+});
 
 export default GroupContent;
