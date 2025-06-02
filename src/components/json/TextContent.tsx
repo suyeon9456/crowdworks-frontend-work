@@ -1,5 +1,6 @@
 import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
+import { compareJsonToPdfStrings } from '../../utils/string';
 import { StyledTextBlock } from './styles';
 import React from 'react';
 
@@ -12,7 +13,7 @@ const TextContent = React.memo(({ text }: Props) => {
 
   return (
     <StyledTextBlock
-      isSelected={selectedText === text.text}
+      isSelected={compareJsonToPdfStrings(text.text, selectedText)}
       label={text.label}
       id={`json-text-${text.text}`}
       onClick={() => onChangeSelectedJsonText(text.text)}
