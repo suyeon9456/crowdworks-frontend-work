@@ -2,7 +2,7 @@ import { PDFPageProxy } from 'pdfjs-dist/types/src/display/api';
 import PdfPage from './PdfPage';
 import { PdfViewerContainer } from './styles';
 
-const PdfViewer = ({ pdfData }: { pdfData: PDFPageProxy }) => {
+const PdfViewer = ({ pdfData }: { pdfData: PDFPageProxy | null }) => {
   // const pdfRef = useRef<PDFDocumentProxy | null>(null);
 
   // const [currentPage, setCurrentPage] = useState<PDFPageProxy | null>(null);
@@ -30,7 +30,7 @@ const PdfViewer = ({ pdfData }: { pdfData: PDFPageProxy }) => {
   //   return await pdfRef.current.getPage(index + 1);
   // };
 
-  if (!pdfData) return null;
+  if (pdfData === null) return <></>;
 
   return (
     <PdfViewerContainer>
