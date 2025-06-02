@@ -1,23 +1,23 @@
-import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
-import { compareJsonToPdfStrings } from '../../utils/string';
 import { StyledTextBlock, GroupBlock } from './styles';
 import React from 'react';
+
 interface Props {
-  groupChildren: Text[];
+  data: Text[];
+  selectedText: string | null;
+  onSelect: (text: string) => void;
 }
 
-const GroupContent = React.memo(({ groupChildren }: Props) => {
-  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
+const GroupContent = React.memo(({ data, selectedText, onSelect }: Props) => {
   return (
     <GroupBlock>
-      {groupChildren.map((child) => (
+      {data.map((child) => (
         <StyledTextBlock
           key={child.self_ref}
           id={`json-text-${child.text}`}
-          isSelected={compareJsonToPdfStrings(child.text, selectedText)}
+          isSelected={child.text === selectedText}
           label={child.label}
-          onClick={() => onChangeSelectedJsonText(child.text)}
+          onClick={() => onSelect(child.text)}
         >
           {child.text}
         </StyledTextBlock>

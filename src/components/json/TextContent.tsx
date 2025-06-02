@@ -1,24 +1,22 @@
-import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Text } from '../../types/json';
-import { compareJsonToPdfStrings } from '../../utils/string';
 import { StyledTextBlock } from './styles';
 import React from 'react';
 
 interface Props {
-  text: Text;
+  data: Text;
+  selectedText: string | null;
+  onSelect: (text: string) => void;
 }
 
-const TextContent = React.memo(({ text }: Props) => {
-  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
-
+const TextContent = React.memo(({ data, selectedText, onSelect }: Props) => {
   return (
     <StyledTextBlock
-      isSelected={compareJsonToPdfStrings(text.text, selectedText)}
-      label={text.label}
-      id={`json-text-${text.text}`}
-      onClick={() => onChangeSelectedJsonText(text.text)}
+      isSelected={selectedText === data.text}
+      label={data.label}
+      id={`json-text-${data.text}`}
+      onClick={() => onSelect(data.text)}
     >
-      {text.text}
+      {data.text}
     </StyledTextBlock>
   );
 });

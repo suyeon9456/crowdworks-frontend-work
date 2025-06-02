@@ -4,7 +4,7 @@ import { JsonViewer } from './styles';
 import TableContent from './TableContent';
 import TextContent from './TextContent';
 import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useScroll } from '../../hooks/useScroll';
 
 interface GroupData {
@@ -23,27 +23,35 @@ interface Props {
   }[];
 }
 
-const ContentMapper: Record<ContentType, (data: ContentData) => React.ReactElement> = {
-  group: (data) => <GroupContent groupChildren={(data as GroupData).children} />,
-  table: (data) => <TableContent table={data as Table} />,
-  text: (data) => <TextContent text={data as Text} />,
-} as const;
-
 const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
-  const { selectedText, selectedType } = usePdfJsonSelection();
+  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
   useEffect(() => {
-    if (!selectedText || selectedType === 'json') return;
+    if (!selectedText) return;
     handleScroll(selectedText);
   }, [selectedText]);
 
   if (jsonData == null) return <></>;
+
   return (
     <JsonViewer style={{ textAlign: 'left', position: 'relative' }} ref={containerRef}>
-      {groupedContent.map((content, index) => (
-        <div key={index}>{ContentMapper[content.type](content.data)}</div>
-      ))}
+      {groupedContent.map((content, index) => {
+        const commonProps = { selectedText, onSelect: onChangeSelectedJsonText };
+        return (
+          <div key={index}>
+            {content.type === 'group' && Array.isArray(content.data.children) && (
+              <GroupContent data={content.data.children as Text[]} {...commonProps} />
+            )}
+            {content.type === 'table' && (
+              <TableContent data={content.data as Table} {...commonProps} />
+            )}
+            {content.type === 'text' && (
+              <TextContent data={content.data as Text} {...commonProps} />
+            )}
+          </div>
+        );
+      })}
     </JsonViewer>
   );
 };

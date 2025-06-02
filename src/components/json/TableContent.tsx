@@ -1,25 +1,25 @@
-import { usePdfJsonSelection } from '../../contexts/PdfJsonContext';
 import { Table } from '../../types/json';
-import { compareJsonToPdfStrings } from '../../utils/string';
 import { TableBlock, TableBody, TableCol, TableRow } from './styles';
 import React from 'react';
+
 interface Props {
-  table: Table;
+  data: Table;
+  selectedText: string | null;
+  onSelect: (text: string) => void;
 }
 
-const TableContent = React.memo(({ table }: Props) => {
-  const { selectedText, onChangeSelectedJsonText } = usePdfJsonSelection();
+const TableContent = React.memo(({ data, selectedText, onSelect }: Props) => {
   return (
     <TableBlock>
       <TableBody>
-        {table.data.grid.map((row, rowIndex) => (
+        {data.data.grid.map((row, rowIndex) => (
           <TableRow key={rowIndex}>
             {row.map((cell, cellIndex) => (
               <TableCol
                 id={`json-text-${cell.text}`}
                 key={cellIndex}
-                isSelected={compareJsonToPdfStrings(cell.text, selectedText)}
-                onClick={() => onChangeSelectedJsonText(cell.text)}
+                isSelected={cell.text === selectedText}
+                onClick={() => onSelect(cell.text)}
               >
                 {cell.text}
               </TableCol>
