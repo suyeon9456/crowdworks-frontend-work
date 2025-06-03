@@ -1,29 +1,48 @@
-import { useMemo, RefObject } from 'react';
+import { useMemo } from 'react';
 import { JsonData, JsonElement, Text, Table } from '../types/json';
 
 interface GroupData {
   groupRef: string;
   children: Text[];
 }
-interface GroupedContent {
-  type: 'group' | 'text' | 'table';
-  data: Text | GroupData | Table;
-  selfRef: string;
-}
 
-export const useGroupedContent = (
-  jsonData: JsonData | null,
-  refMap: RefObject<Map<string, JsonElement>>,
-) => {
+type Content =
+  | { type: 'group'; data: GroupData; selfRef: string }
+  | { type: 'text'; data: Text; selfRef: string }
+  | { type: 'table'; data: Table; selfRef: string };
+
+const useJsonDataParsing = (jsonData: JsonData | null) => {
+  const initializeSelfRefMap = (data: JsonData) => {
+    const map = new Map<string, JsonElement>();
+    map.clear();
+
+    const elementContents = [
+      ...data.texts,
+      ...data.pictures,
+      ...data.tables,
+      ...data.groups,
+      { ...data.body, self_ref: data.body.self_ref },
+    ] as JsonElement[];
+
+    elementContents.forEach((el) => {
+      if ('self_ref' in el && el.self_ref) {
+        map.set(el.self_ref, el);
+      }
+    });
+
+    return map;
+  };
+
   return useMemo(() => {
     if (!jsonData) return [];
 
     const rendered = new Set<string>();
-    const contentMap = new Map<string, GroupedContent>();
+    const selfRefMap = initializeSelfRefMap(jsonData);
+    const contentMap = new Map<string, Content>();
 
     jsonData.texts.forEach((text) => {
       const parentRef = text.parent?.$ref;
-      const parent = refMap.current.get(parentRef);
+      const parent = selfRefMap.get(parentRef);
 
       if (
         parent &&
@@ -33,7 +52,7 @@ export const useGroupedContent = (
         rendered.add(parent.self_ref);
 
         const groupChildren = (parent.children || [])
-          .map((child: { $ref: string }) => refMap.current.get(child.$ref))
+          .map((child: { $ref: string }) => selfRefMap.get(child.$ref))
           .filter((item): item is Text => item !== undefined && 'text' in item);
 
         contentMap.set(parent.self_ref, {
@@ -72,7 +91,7 @@ export const useGroupedContent = (
       });
     }
 
-    const result: GroupedContent[] = [];
+    const result: Content[] = [];
     jsonData.body.children.forEach((child) => {
       const content = contentMap.get(child.$ref);
       if (content) {
@@ -81,5 +100,7 @@ export const useGroupedContent = (
     });
 
     return result;
-  }, [jsonData, refMap]);
+  }, [jsonData]);
 };
+
+export default useJsonDataParsing;

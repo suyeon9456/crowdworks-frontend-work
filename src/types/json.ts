@@ -32,7 +32,7 @@ export interface JsonData {
     parent: { $ref: string };
     self_ref: string;
     children: Array<{ $ref: string }>;
-  };
+  }[];
   texts: Array<Text>;
   pictures: Array<Picture>;
   tables: Array<Table>;
