@@ -13,7 +13,6 @@ type Content =
 
 const useJsonDataParsing = (jsonData: JsonData | null) => {
   const initializeSelfRefMap = (data: JsonData) => {
-    console.log('🚀 ~ initializeSelfRefMap ~ data:', data);
     const map = new Map<string, JsonElement>();
     map.clear();
 
