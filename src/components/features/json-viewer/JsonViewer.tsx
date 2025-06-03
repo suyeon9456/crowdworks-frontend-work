@@ -17,13 +17,13 @@ type ContentData = Text | GroupData | Table;
 
 interface Props {
   jsonData: JsonData | null;
-  groupedContent: {
+  parsedJsonData: {
     type: ContentType;
     data: ContentData;
   }[];
 }
 
-const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
+const JsonTextBlockViewer = ({ jsonData, parsedJsonData }: Props) => {
   const { selectedText, selectedType, onChangeSelectedJsonText } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
@@ -36,7 +36,7 @@ const JsonTextBlockViewer = ({ jsonData, groupedContent }: Props) => {
 
   return (
     <JsonViewerContainer style={{ textAlign: 'left', position: 'relative' }} ref={containerRef}>
-      {groupedContent.map((content, index) => {
+      {parsedJsonData.map((content, index) => {
         const commonProps = { selectedText, onSelect: onChangeSelectedJsonText };
         return (
           <div key={index}>
