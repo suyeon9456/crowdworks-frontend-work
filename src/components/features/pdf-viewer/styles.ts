@@ -24,3 +24,13 @@ export const PdfPageTextLayer = styled.div`
     transform-origin: 0% 0%;
   }
 `;
+
+export const PdfPageHighlightContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+`;

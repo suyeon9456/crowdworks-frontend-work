@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { JsonData, JsonElement, Text, Table, GroupItem } from '../types/json';
+import { JsonData, JsonElement, Text, Table } from '../types/json';
 
 interface GroupData {
   groupRef: string;
@@ -13,29 +13,27 @@ type Content =
 
 const useJsonDataParsing = (jsonData: JsonData | null) => {
   const initializeSelfRefMap = (data: JsonData) => {
+    console.log('🚀 ~ initializeSelfRefMap ~ data:', data);
     const map = new Map<string, JsonElement>();
     map.clear();
 
-    const elements = [
+    const elementContents = [
       ...data.texts,
       ...data.pictures,
       ...data.tables,
       ...Object.values(data.groups),
-      ...data.furniture.children.map(
-        (child: { $ref: string }) =>
-          ({
-            self_ref: child.$ref,
-            label: '',
-            content_layer: 'body',
-            name: '',
-            parent: { $ref: '' },
-            children: [],
-          }) as GroupItem,
-      ),
+      ...data.furniture.children.map((child: { $ref: string }) => ({
+        self_ref: child.$ref,
+        label: '',
+        content_layer: 'body',
+        name: '',
+        parent: { $ref: '' },
+        children: [],
+      })),
       { ...data.body, self_ref: data.body.self_ref },
     ] as JsonElement[];
 
-    elements.forEach((el) => {
+    elementContents.forEach((el) => {
       if ('self_ref' in el && el.self_ref) {
         map.set(el.self_ref, el);
       }
