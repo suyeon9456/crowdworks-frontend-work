@@ -27,7 +27,7 @@ const useJsonData = ({ jsonUrl }: { jsonUrl: string }) => {
 
   useEffect(() => {
     fetchJsonData();
-  }, []);
+  }, [jsonUrl]);
 
   return {
     jsonData,

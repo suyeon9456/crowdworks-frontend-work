@@ -23,7 +23,7 @@ const usePdfData = ({ pdfUrl }: Props) => {
 
   useEffect(() => {
     getPdfPage(1);
-  }, []);
+  }, [pdfUrl]);
 
   return { getPdfPage, pdfData: currentPdfPage };
 };
