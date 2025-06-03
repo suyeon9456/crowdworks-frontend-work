@@ -20,15 +20,7 @@ const useJsonDataParsing = (jsonData: JsonData | null) => {
       ...data.texts,
       ...data.pictures,
       ...data.tables,
-      ...Object.values(data.groups),
-      ...data.furniture.children.map((child: { $ref: string }) => ({
-        self_ref: child.$ref,
-        label: '',
-        content_layer: 'body',
-        name: '',
-        parent: { $ref: '' },
-        children: [],
-      })),
+      ...data.groups,
       { ...data.body, self_ref: data.body.self_ref },
     ] as JsonElement[];
 
