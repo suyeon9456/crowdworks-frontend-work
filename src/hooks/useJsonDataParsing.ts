@@ -5,11 +5,11 @@ interface GroupData {
   groupRef: string;
   children: Text[];
 }
-interface GroupedContent {
-  type: 'group' | 'text' | 'table';
-  data: Text | GroupData | Table;
-  selfRef: string;
-}
+
+type Content =
+  | { type: 'group'; data: GroupData; selfRef: string }
+  | { type: 'text'; data: Text; selfRef: string }
+  | { type: 'table'; data: Table; selfRef: string };
 
 const useJsonDataParsing = (jsonData: JsonData | null) => {
   const initializeSelfRefMap = (data: JsonData) => {
@@ -49,7 +49,7 @@ const useJsonDataParsing = (jsonData: JsonData | null) => {
 
     const rendered = new Set<string>();
     const selfRefMap = initializeSelfRefMap(jsonData);
-    const contentMap = new Map<string, GroupedContent>();
+    const contentMap = new Map<string, Content>();
 
     jsonData.texts.forEach((text) => {
       const parentRef = text.parent?.$ref;
@@ -102,7 +102,7 @@ const useJsonDataParsing = (jsonData: JsonData | null) => {
       });
     }
 
-    const result: GroupedContent[] = [];
+    const result: Content[] = [];
     jsonData.body.children.forEach((child) => {
       const content = contentMap.get(child.$ref);
       if (content) {

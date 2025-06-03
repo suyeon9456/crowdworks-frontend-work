@@ -4,7 +4,7 @@ import * as pdfjs from 'pdfjs-dist';
 import useJsonData from './hooks/useJsonData';
 import useJsonDataParsing from './hooks/useJsonDataParsing';
 import { PdfJsonProvider } from './contexts/PdfJsonContext';
-import JsonViewer from './components/features/json-viewer/JsonViewer';
+import JsonRenderer from './components/features/json-viewer/JsonRenderer';
 import usePdfData from './hooks/usePdfData';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -17,7 +17,7 @@ function App() {
     <div style={{ display: 'flex' }}>
       <PdfJsonProvider>
         <PdfViewer pdfData={pdfData} />
-        <JsonViewer jsonData={jsonData} parsedJsonData={parsedJsonData} />
+        <JsonRenderer jsonData={jsonData} parsedJsonData={parsedJsonData} />
       </PdfJsonProvider>
     </div>
   );

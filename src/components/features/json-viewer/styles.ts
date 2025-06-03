@@ -12,6 +12,8 @@ export const JsonViewerContainer = styled.div`
   width: 595px;
   height: 842px;
   overflow-y: scroll;
+  text-align: left;
+  position: relative;
 `;
 
 export const StyledTextBlock = styled.span<TextBlockProps>`

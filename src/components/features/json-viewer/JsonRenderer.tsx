@@ -12,18 +12,17 @@ interface GroupData {
   children: Text[];
 }
 
-type ContentType = 'group' | 'text' | 'table';
-type ContentData = Text | GroupData | Table;
+type Content =
+  | { type: 'group'; data: GroupData; selfRef: string }
+  | { type: 'text'; data: Text; selfRef: string }
+  | { type: 'table'; data: Table; selfRef: string };
 
 interface Props {
   jsonData: JsonData | null;
-  parsedJsonData: {
-    type: ContentType;
-    data: ContentData;
-  }[];
+  parsedJsonData: Content[];
 }
 
-const JsonTextBlockViewer = ({ jsonData, parsedJsonData }: Props) => {
+const JsonRenderer = ({ jsonData, parsedJsonData }: Props) => {
   const { selectedText, selectedType, onChangeSelectedJsonText } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
@@ -35,20 +34,16 @@ const JsonTextBlockViewer = ({ jsonData, parsedJsonData }: Props) => {
   if (jsonData == null) return <></>;
 
   return (
-    <JsonViewerContainer style={{ textAlign: 'left', position: 'relative' }} ref={containerRef}>
+    <JsonViewerContainer ref={containerRef}>
       {parsedJsonData.map((content, index) => {
         const commonProps = { selectedText, onSelect: onChangeSelectedJsonText };
         return (
           <div key={index}>
-            {content.type === 'group' && Array.isArray(content.data.children) && (
-              <GroupContent data={content.data.children as Text[]} {...commonProps} />
+            {content.type === 'group' && (
+              <GroupContent data={content.data.children} {...commonProps} />
             )}
-            {content.type === 'table' && (
-              <TableContent data={content.data as Table} {...commonProps} />
-            )}
-            {content.type === 'text' && (
-              <TextContent data={content.data as Text} {...commonProps} />
-            )}
+            {content.type === 'table' && <TableContent data={content.data} {...commonProps} />}
+            {content.type === 'text' && <TextContent data={content.data} {...commonProps} />}
           </div>
         );
       })}
@@ -56,4 +51,4 @@ const JsonTextBlockViewer = ({ jsonData, parsedJsonData }: Props) => {
   );
 };
 
-export default JsonTextBlockViewer;
+export default JsonRenderer;
