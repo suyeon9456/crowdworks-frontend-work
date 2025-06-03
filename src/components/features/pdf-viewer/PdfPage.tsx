@@ -4,9 +4,18 @@ import { PDFPageProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
 import { PdfPageContainer, PdfPageTextLayer } from './styles';
 import { usePdfJsonSelection } from '@/contexts/PdfJsonContext';
 
+const HIGHLIGHT_COLOR = 'rgba(24, 144, 255, 0.1)';
+const HIGHLIGHT_BORDER = 'rgba(9, 109, 217)';
+const HORIZONTAL_GAP_THRESHOLD = 20;
+
 interface Props {
   scale: number;
   page: PDFPageProxy;
+}
+
+interface RenderContext {
+  canvasContext: CanvasRenderingContext2D;
+  viewport: any;
 }
 
 const PdfPage = React.memo(({ scale, page }: Props) => {
@@ -21,8 +30,8 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
     () => `
     .highlight {
       position: absolute;
-      background-color: rgba(24, 144, 255, 0.1);
-      border: 2px solid rgba(9, 109, 217);
+      background-color: ${HIGHLIGHT_COLOR};
+      border: 2px solid ${HIGHLIGHT_BORDER};
       pointer-events: none;
       display: none;
     }
@@ -30,9 +39,77 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
     [],
   );
 
+  const groupTextItems = (items: any[]): TextItem[] => {
+    return items
+      .filter((item): item is TextItem => 'str' in item && item.str.trim() !== '')
+      .reduce((acc: TextItem[], item: TextItem) => {
+        const lastGroup = acc[acc.length - 1];
+        if (!lastGroup) return [item];
+
+        const horizontalGap = item.transform[4] - (lastGroup.transform[4] + lastGroup.width);
+        if (
+          lastGroup &&
+          lastGroup.transform[5] === item.transform[5] &&
+          horizontalGap < HORIZONTAL_GAP_THRESHOLD
+        ) {
+          lastGroup.str += item.str;
+          lastGroup.width += item.width;
+        } else {
+          acc.push({ ...item });
+        }
+        return acc;
+      }, []);
+  };
+
+  const attachTextEventListeners = (
+    textDivs: HTMLDivElement[],
+    groupedItems: TextItem[],
+    onChangeSelectedPdfText: (text: string | null) => void,
+  ) => {
+    textDivs.forEach((div, index) => {
+      const textItem = groupedItems[index];
+      if (textItem && 'str' in textItem) {
+        div.id = `pdf-text-${textItem.str}`;
+        div.style.cursor = 'pointer';
+
+        div.onmouseenter = () => onChangeSelectedPdfText(textItem.str);
+        div.onmouseleave = () => onChangeSelectedPdfText(null);
+      }
+    });
+  };
+
+  const renderPdfText = async (
+    page: PDFPageProxy,
+    viewport: any,
+    textLayerRef: React.RefObject<HTMLDivElement | null>,
+    onChangeSelectedPdfText: (text: string | null) => void,
+  ) => {
+    const textContent = await page.getTextContent();
+    if (!textLayerRef.current) return;
+
+    textLayerRef.current.style.setProperty('--scale-factor', viewport.scale.toString());
+
+    const groupedItems = groupTextItems(textContent.items);
+    const textDivs: HTMLDivElement[] = [];
+
+    await pdfjs.renderTextLayer({
+      textContentSource: { ...textContent, items: groupedItems },
+      container: textLayerRef.current,
+      viewport: viewport,
+      textDivs: textDivs,
+    }).promise;
+
+    attachTextEventListeners(textDivs, groupedItems, onChangeSelectedPdfText);
+  };
+
   useEffect(() => {
     if (!page) return;
 
+    initializeHighlightContainer();
+    renderPdfPage();
+  }, [scale, highlightStyle]);
+
+  const initializeHighlightContainer = () => {
     if (highlightContainerRef.current && !shadowRootRef.current) {
       shadowRootRef.current = highlightContainerRef.current.attachShadow({ mode: 'open' });
       const style = document.createElement('style');
@@ -44,74 +121,31 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
       shadowRootRef.current.appendChild(highlight);
       highlightRef.current = highlight;
     }
+  };
 
+  const renderPdfPage = () => {
     const viewport = page.getViewport({ scale });
-
     const canvas = canvasRef.current;
-    if (canvas) {
-      const context = canvas.getContext('2d');
-      if (!context) return;
+    if (!canvas) return;
 
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+    const context = canvas.getContext('2d');
+    if (!context) return;
 
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport,
-      };
-      const renderTask = page.render(renderContext);
-      renderTask.promise.then(function () {
-        console.log('Page rendered');
-      });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
 
-      page.getTextContent().then((textContent) => {
-        if (!textLayerRef.current) return;
+    const renderContext: RenderContext = {
+      canvasContext: context,
+      viewport: viewport,
+    };
 
-        textLayerRef.current.style.setProperty('--scale-factor', scale.toString());
-
-        const groupedItems = textContent.items
-          .filter((item): item is TextItem => 'str' in item && item.str.trim() !== '')
-          .reduce((acc: TextItem[], item: TextItem) => {
-            const lastGroup = acc[acc.length - 1];
-            if (!lastGroup) return [item];
-            const horizontalGap = item.transform[4] - (lastGroup.transform[4] + lastGroup.width);
-            if (lastGroup && lastGroup.transform[5] === item.transform[5] && horizontalGap < 20) {
-              lastGroup.str += item.str;
-              lastGroup.width += item.width;
-            } else {
-              acc.push({ ...item });
-            }
-            return acc;
-          }, []);
-
-        const textDivs: HTMLDivElement[] = [];
-        pdfjs
-          .renderTextLayer({
-            textContentSource: { ...textContent, items: groupedItems },
-            container: textLayerRef.current,
-            viewport: viewport,
-            textDivs: textDivs,
-          })
-          .promise.then(() => {
-            textDivs.forEach((div, index) => {
-              const textItem = groupedItems[index];
-              if (textItem && 'str' in textItem) {
-                div.id = `pdf-text-${textItem.str}`;
-                div.style.cursor = 'pointer';
-
-                div.onmouseenter = () => {
-                  onChangeSelectedPdfText(textItem.str);
-                };
-
-                div.onmouseleave = () => {
-                  onChangeSelectedPdfText(null);
-                };
-              }
-            });
-          });
-      });
-    }
-  }, [scale, highlightStyle]);
+    page.render(renderContext).promise.then(() => {
+      console.log('Page rendered');
+      if (textLayerRef.current) {
+        renderPdfText(page, viewport, textLayerRef, onChangeSelectedPdfText);
+      }
+    });
+  };
 
   useEffect(() => {
     if (!shadowRootRef.current || !highlightRef.current) return;
@@ -120,20 +154,24 @@ const PdfPage = React.memo(({ scale, page }: Props) => {
     const textDiv = document.getElementById(`pdf-text-${selectedText}`);
 
     if (textDiv && selectedText) {
-      const rect = textDiv.getBoundingClientRect();
-      const containerRect = highlightContainerRef.current?.getBoundingClientRect();
-
-      if (containerRect) {
-        highlight.style.left = `${rect.left - containerRect.left}px`;
-        highlight.style.top = `${rect.top - containerRect.top}px`;
-        highlight.style.width = `${rect.width}px`;
-        highlight.style.height = `${rect.height}px`;
-        highlight.style.display = 'block';
-      }
+      updateHighlightPosition(textDiv, highlight);
     } else {
       highlight.style.display = 'none';
     }
   }, [selectedText]);
+
+  const updateHighlightPosition = (textDiv: HTMLElement, highlight: HTMLDivElement) => {
+    const rect = textDiv.getBoundingClientRect();
+    const containerRect = highlightContainerRef.current?.getBoundingClientRect();
+
+    if (containerRect) {
+      highlight.style.left = `${rect.left - containerRect.left}px`;
+      highlight.style.top = `${rect.top - containerRect.top}px`;
+      highlight.style.width = `${rect.width}px`;
+      highlight.style.height = `${rect.height}px`;
+      highlight.style.display = 'block';
+    }
+  };
 
   return (
     <PdfPageContainer>
