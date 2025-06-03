@@ -16,7 +16,7 @@ const PdfJsonInteractivePage = () => {
     <div style={{ display: 'flex' }}>
       <PdfJsonProvider>
         <PdfViewer pdfData={pdfData} />
-        <JsonRenderer jsonData={jsonData} parsedJsonData={parsedJsonData} />
+        <JsonRenderer parsedJsonData={parsedJsonData} />
       </PdfJsonProvider>
     </div>
   );

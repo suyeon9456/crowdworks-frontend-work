@@ -1,4 +1,4 @@
-import { JsonData, Text, Table } from '@/types/json';
+import { Text, Table } from '@/types/json';
 import GroupContent from './blocks/JsonGroupBlock';
 import { JsonViewerContainer } from './styles';
 import TableContent from './blocks/JsonTableBlock';
@@ -18,11 +18,10 @@ type Content =
   | { type: 'table'; data: Table; selfRef: string };
 
 interface Props {
-  jsonData: JsonData | null;
   parsedJsonData: Content[];
 }
 
-const JsonRenderer = ({ jsonData, parsedJsonData }: Props) => {
+const JsonRenderer = ({ parsedJsonData }: Props) => {
   const { selectedText, selectedType, onChangeSelectedJsonText } = usePdfJsonSelection();
   const { containerRef, handleScroll } = useScroll();
 
@@ -31,7 +30,7 @@ const JsonRenderer = ({ jsonData, parsedJsonData }: Props) => {
     handleScroll(selectedText);
   }, [selectedText, selectedType]);
 
-  if (jsonData == null) return <></>;
+  if (parsedJsonData == null) return <></>;
 
   return (
     <JsonViewerContainer ref={containerRef}>
